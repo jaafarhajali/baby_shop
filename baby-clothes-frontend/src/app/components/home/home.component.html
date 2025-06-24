@@ -67,14 +67,15 @@
     <!-- Loading indicator shown while fetching data -->
     <div class="loading" *ngIf="loading">Loading products...</div>
     <!-- Product grid shown after data loads -->
-    <div class="products-grid" *ngIf="!loading">
-      <div class="product-card" *ngFor="let product of featuredProducts">
+    <div class="products-grid" *ngIf="!loading">      <div class="product-card" *ngFor="let product of featuredProducts">
         <!-- Product image with proper accessibility attributes -->
-        <img 
-          [src]="product.image_url" 
-          [alt]="'Image of ' + product.name" 
-          [title]="product.name"
-          class="product-image">
+        <div class="product-image-container">
+          <img 
+            [src]="product.image_url" 
+            [alt]="'Image of ' + product.name" 
+            [title]="product.name"
+            class="product-image">
+        </div>
         <div class="product-info">
           <h3>{{ product.name }}</h3>
           <p class="product-price">${{ product.price }}</p>

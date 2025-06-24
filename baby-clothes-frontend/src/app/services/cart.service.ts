@@ -8,7 +8,7 @@ import { CartItem, AddToCartRequest, UpdateCartRequest, Cart } from '../models/c
   providedIn: 'root'
 })
 export class CartService {
-  private baseUrl = 'http://localhost:8000/api.php';
+  private baseUrl = 'http://localhost/baby-clothes-shop/baby-clothes-api/api.php';
   private cartSubject = new BehaviorSubject<Cart>({ items: [], total: 0, itemCount: 0 });
   public cart$ = this.cartSubject.asObservable();
 
@@ -22,9 +22,13 @@ export class CartService {
   }
 
   addToCart(item: AddToCartRequest): Observable<any> {
+    console.log('Adding to cart:', item);
     return this.http.post(`${this.baseUrl}/cart`, item)
       .pipe(
-        tap(() => this.refreshCart(item.user_id))
+        tap(response => {
+          console.log('Add to cart response:', response);
+          this.refreshCart(item.user_id);
+        })
       );
   }
 

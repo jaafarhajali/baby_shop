@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../services/product.service';
 import { Product, ProductFilter, Category } from '../../models/product.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-product-catalog',
@@ -11,13 +12,15 @@ import { Product, ProductFilter, Category } from '../../models/product.model';
   templateUrl: './product-catalog.component.html',
   styleUrl: './product-catalog.component.css'
 })
-export class ProductCatalogComponent implements OnInit {
+export class ProductCatalogComponent implements OnInit, OnDestroy {
   products: Product[] = [];
   categories: Category | null = null;
   loading = true;
   
   filters: ProductFilter = {};
   searchQuery = '';
+  
+  private subscriptions: Subscription[] = [];
 
   constructor(
     private productService: ProductService,
@@ -26,36 +29,63 @@ export class ProductCatalogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadCategories();
-    
-    // Load initial filters from query params
-    this.route.queryParams.subscribe(params => {
-      this.filters = {
-        category: params['category'],
-        age_group: params['age_group'],
-        gender: params['gender'],
-        search: params['search'],
-        sort: params['sort']
-      };
-      this.searchQuery = params['search'] || '';
-      this.loadProducts();
+    // Wrap in try-catch to prevent async errors
+    try {
+      this.loadCategories();
+      
+      // Load initial filters from query params
+      const routeSubscription = this.route.queryParams.subscribe({
+        next: (params) => {
+          this.filters = {
+            category: params['category'],
+            age_group: params['age_group'],
+            gender: params['gender'],
+            search: params['search'],
+            sort: params['sort']
+          };
+          this.searchQuery = params['search'] || '';
+          this.loadProducts();
+        },
+        error: (error) => {
+          console.error('Error subscribing to route params:', error);
+          this.loading = false;
+        }
+      });
+      
+      this.subscriptions.push(routeSubscription);
+    } catch (error) {
+      console.error('Error in ngOnInit:', error);
+      this.loading = false;
+    }
+  }
+
+  ngOnDestroy(): void {
+    // Clean up subscriptions to prevent memory leaks
+    this.subscriptions.forEach(sub => {
+      if (sub && !sub.closed) {
+        sub.unsubscribe();
+      }
     });
   }
 
   loadCategories(): void {
-    this.productService.getCategories().subscribe({
+    const categoriesSubscription = this.productService.getCategories().subscribe({
       next: (categories) => {
         this.categories = categories;
       },
       error: (error) => {
         console.error('Error loading categories:', error);
+        // Continue even if categories fail to load
       }
     });
+    
+    this.subscriptions.push(categoriesSubscription);
   }
 
   loadProducts(): void {
     this.loading = true;
-    this.productService.getProducts(this.filters).subscribe({
+    
+    const productsSubscription = this.productService.getProducts(this.filters).subscribe({
       next: (products) => {
         this.products = products;
         this.loading = false;
@@ -63,8 +93,12 @@ export class ProductCatalogComponent implements OnInit {
       error: (error) => {
         console.error('Error loading products:', error);
         this.loading = false;
+        // Set empty array on error to prevent UI issues
+        this.products = [];
       }
     });
+    
+    this.subscriptions.push(productsSubscription);
   }
 
   onFilterChange(): void {

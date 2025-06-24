@@ -1,5 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* Import image utilities */
+@import './image-utilities.css';
+
 /* Global Styles */
 * {
   margin: 0;
@@ -113,6 +116,26 @@ input, select, textarea {
 img {
   max-width: 100%;
   height: auto;
+  display: block;
+}
+
+/* Default image styling for product images */
+.product-image,
+.item-image,
+[class*="image"] img {
+  transition: transform 0.3s ease;
+}
+
+/* Image loading state */
+img[src=""], img:not([src]) {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+}
+
+/* Image error state */
+img::before {
+  content: '';
+  background: #f8f9fa;
 }
 
 /* Custom scrollbar */

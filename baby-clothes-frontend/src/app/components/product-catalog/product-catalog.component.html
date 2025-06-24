@@ -71,7 +71,9 @@
 
       <div class="products-grid" *ngIf="!loading">
         <div class="product-card" *ngFor="let product of products">
-          <img [src]="product.image_url" [alt]="product.name" class="product-image">
+          <div class="product-image-container">
+            <img [src]="product.image_url" [alt]="product.name" class="product-image">
+          </div>
           <div class="product-info">
             <h3>{{ product.name }}</h3>
             <p class="product-price">${{ product.price }}</p>

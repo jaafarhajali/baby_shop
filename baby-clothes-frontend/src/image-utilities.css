@@ -1,0 +1,100 @@
+/* Image Utility Classes - Add these to your global styles.css */
+
+/* Image loading placeholder */
+.image-placeholder {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 2s infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 0.8rem;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Image error fallback */
+.image-error {
+  background: #f8f9fa;
+  border: 2px dashed #dee2e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6c757d;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.image-error::before {
+  content: "📷";
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+  display: block;
+}
+
+/* Lazy loading effect */
+.image-lazy {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-lazy.loaded {
+  opacity: 1;
+}
+
+/* Image zoom on hover effect */
+.image-zoom {
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.image-zoom img {
+  transition: transform 0.5s ease;
+}
+
+.image-zoom:hover img {
+  transform: scale(1.1);
+}
+
+/* Responsive image containers */
+.image-container {
+  position: relative;
+  background: #f8f9fa;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Image loading spinner */
+.image-loading {
+  position: relative;
+}
+
+.image-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

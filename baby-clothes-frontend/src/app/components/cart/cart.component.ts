@@ -30,13 +30,49 @@ export class CartComponent implements OnInit, OnDestroy {
     // Subscribe to cart changes
     this.subscriptions.push(
       this.cartService.cart$.subscribe(cart => {
+        console.log('Cart updated:', cart);
         this.cart = cart;
+        
+        // Debug: log image URLs
+        if (cart.items && cart.items.length > 0) {
+          cart.items.forEach(item => {
+            console.log(`Item: ${item.name}, Image URL: ${item.image_url}, Price: ${item.price} (type: ${typeof item.price})`);
+          });
+        }
       })
     );
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  // Helper methods to ensure numeric values for price calculations
+  getPrice(price: any): number {
+    return typeof price === 'number' ? price : parseFloat(price) || 0;
+  }
+
+  getItemTotal(item: CartItem): number {
+    return this.getPrice(item.price) * item.quantity;
+  }
+
+  formatPrice(price: any): string {
+    return this.getPrice(price).toFixed(2);
+  }
+
+  formatItemTotal(item: CartItem): string {
+    return this.getItemTotal(item).toFixed(2);
+  }
+
+  formatCartTotal(): string {
+    return this.getPrice(this.cart.total).toFixed(2);
+  }
+
+  // Image error handler
+  onImageError(event: any, item: CartItem): void {
+    console.log('Image failed to load for item:', item.name, 'URL:', item.image_url);
+    // Set a fallback image
+    event.target.src = 'assets/onesie-white.jpeg';
   }
 
   loadCart(): void {

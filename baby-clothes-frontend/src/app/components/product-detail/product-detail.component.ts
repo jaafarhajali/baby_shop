@@ -63,29 +63,59 @@ export class ProductDetailComponent implements OnInit {
 
   addToCart(): void {
     if (!this.authService.isLoggedIn()) {
+      alert('Please log in to add items to cart');
       this.router.navigate(['/login']);
       return;
     }
 
-    if (!this.product) return;
+    if (!this.product) {
+      alert('Product not found');
+      return;
+    }
 
     const userId = this.authService.getCurrentUserId();
-    if (!userId) return;
+    if (!userId) {
+      alert('User session expired. Please log in again.');
+      this.router.navigate(['/login']);
+      return;
+    }
 
     this.addingToCart = true;
-    this.cartService.addToCart({
+    
+    const cartItem = {
       user_id: userId,
       product_id: this.product.id,
       quantity: this.quantity
-    }).subscribe({
-      next: () => {
+    };
+    
+    console.log('Adding to cart:', cartItem);
+    
+    this.cartService.addToCart(cartItem).subscribe({
+      next: (response) => {
+        console.log('Cart add success:', response);
         this.addingToCart = false;
-        alert('Product added to cart!');
+        alert('Product added to cart successfully!');
       },
       error: (error) => {
         console.error('Error adding to cart:', error);
+        console.error('Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          message: error.message,
+          error: error.error
+        });
         this.addingToCart = false;
-        alert('Error adding product to cart');
+        
+        let errorMessage = 'Error adding product to cart';
+        if (error.status === 400) {
+          errorMessage = 'Invalid request. Please check your input.';
+        } else if (error.status === 500) {
+          errorMessage = 'Server error. Please try again later.';
+        } else if (error.status === 0) {
+          errorMessage = 'Connection error. Please check if the server is running.';
+        }
+        
+        alert(errorMessage);
       }
     });
   }

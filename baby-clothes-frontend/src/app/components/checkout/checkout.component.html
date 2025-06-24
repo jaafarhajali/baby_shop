@@ -89,7 +89,9 @@
         
         <div class="order-items">
           <div class="order-item" *ngFor="let item of cart.items">
-            <img [src]="item.image_url" [alt]="item.name" [title]="item.name" class="item-image">
+            <div class="item-image-container">
+              <img [src]="item.image_url" [alt]="item.name" [title]="item.name" class="item-image">
+            </div>
             <div class="item-details">
               <h4>{{ item.name }}</h4>
               <p>Quantity: {{ item.quantity }}</p>
