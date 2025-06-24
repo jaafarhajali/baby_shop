@@ -1,15 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { Product, ProductFilter, Category } from '../models/product.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
-  private baseUrl = 'http://localhost:8000/api.php';
+  // Updated URL to work with XAMPP setup
+  private baseUrl = 'http://localhost/baby-clothes-shop/baby-clothes-api/api.php';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) { 
+    console.log('ProductService initialized with URL:', this.baseUrl);
+  }
 
   getProducts(filters?: ProductFilter): Observable<Product[]> {
     let params = new HttpParams();
@@ -22,7 +26,16 @@ export class ProductService {
       if (filters.sort) params = params.set('sort', filters.sort);
     }
 
-    return this.http.get<Product[]>(`${this.baseUrl}/products`, { params });
+    console.log('Making API request to:', `${this.baseUrl}/products`);
+    return this.http.get<Product[]>(`${this.baseUrl}/products`, { params }).pipe(
+      tap(products => console.log('Products received:', products.length, 'items')),
+      catchError(error => {
+        console.error('Error fetching products:', error);
+        console.error('Error status:', error.status);
+        console.error('Error URL:', error.url);
+        return throwError(() => error);
+      })
+    );
   }
 
   getProduct(id: number): Observable<Product> {
@@ -30,7 +43,14 @@ export class ProductService {
   }
 
   getCategories(): Observable<Category> {
-    return this.http.get<Category>(`${this.baseUrl}/categories`);
+    console.log('Making API request to:', `${this.baseUrl}/categories`);
+    return this.http.get<Category>(`${this.baseUrl}/categories`).pipe(
+      tap(categories => console.log('Categories received:', categories)),
+      catchError(error => {
+        console.error('Error fetching categories:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   getFeaturedProducts(): Observable<Product[]> {
