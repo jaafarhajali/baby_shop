@@ -1,0 +1,110 @@
+<div class="cart-container">
+  <div class="cart-header">
+    <h1>Shopping Cart</h1>
+    <div class="cart-summary" *ngIf="!isEmpty">
+      <span class="item-count">{{ cart.itemCount }} items</span>
+      <span class="total-price">Total: ${{ cart.total.toFixed(2) }}</span>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading" *ngIf="loading">
+    <p>Loading your cart...</p>
+  </div>
+
+  <!-- Not Logged In -->
+  <div class="not-logged-in" *ngIf="!loading && !isLoggedIn">
+    <div class="empty-cart-message">
+      <h2>Please log in to view your cart</h2>
+      <p>You need to be logged in to add items to your cart and make purchases.</p>
+      <a routerLink="/login" class="login-btn">Log In</a>
+    </div>
+  </div>
+
+  <!-- Empty Cart -->
+  <div class="empty-cart" *ngIf="!loading && isLoggedIn && isEmpty">
+    <div class="empty-cart-message">
+      <div class="empty-cart-icon">🛒</div>
+      <h2>Your cart is empty</h2>
+      <p>Looks like you haven't added any items to your cart yet.</p>
+      <a routerLink="/products" class="shop-now-btn">Continue Shopping</a>
+    </div>
+  </div>
+
+  <!-- Cart Items -->
+  <div class="cart-content" *ngIf="!loading && isLoggedIn && !isEmpty">
+    <div class="cart-items">
+      <div class="cart-item" *ngFor="let item of cart.items" [class.updating]="updatingItems.has(item.id)">
+        <div class="item-image">
+          <img [src]="item.image_url" [alt]="item.name">
+        </div>
+        
+        <div class="item-details">
+          <h3>{{ item.name }}</h3>
+          <p class="item-price">${{ item.price.toFixed(2) }} each</p>
+        </div>
+        
+        <div class="quantity-controls">
+          <button 
+            class="qty-btn" 
+            (click)="updateQuantity(item, item.quantity - 1)"
+            [disabled]="item.quantity <= 1 || updatingItems.has(item.id)"
+          >
+            -
+          </button>
+          <span class="quantity">{{ item.quantity }}</span>
+          <button 
+            class="qty-btn" 
+            (click)="updateQuantity(item, item.quantity + 1)"
+            [disabled]="updatingItems.has(item.id)"
+          >
+            +
+          </button>
+        </div>
+        
+        <div class="item-total">
+          <span class="total-price">${{ (item.price * item.quantity).toFixed(2) }}</span>
+        </div>
+        
+        <div class="item-actions">
+          <button 
+            class="remove-btn" 
+            (click)="removeItem(item)"
+            [disabled]="updatingItems.has(item.id)"
+          >
+            <span *ngIf="!updatingItems.has(item.id)">Remove</span>
+            <span *ngIf="updatingItems.has(item.id)">...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart Summary -->
+    <div class="cart-summary-section">
+      <div class="summary-card">
+        <h3>Order Summary</h3>
+        
+        <div class="summary-row">
+          <span>Subtotal ({{ cart.itemCount }} items):</span>
+          <span>${{ cart.total.toFixed(2) }}</span>
+        </div>
+        
+        <div class="summary-row">
+          <span>Shipping:</span>
+          <span>Free</span>
+        </div>
+        
+        <div class="summary-row total-row">
+          <span>Total:</span>
+          <span>${{ cart.total.toFixed(2) }}</span>
+        </div>
+        
+        <div class="cart-actions">
+          <a routerLink="/checkout" class="checkout-btn">Proceed to Checkout</a>
+          <button class="clear-cart-btn" (click)="clearCart()">Clear Cart</button>
+          <a routerLink="/products" class="continue-shopping">Continue Shopping</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

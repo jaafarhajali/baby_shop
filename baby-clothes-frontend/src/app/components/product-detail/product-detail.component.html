@@ -1,0 +1,91 @@
+<div class="product-detail-container">
+  <div class="loading" *ngIf="loading">Loading product...</div>
+  
+  <div class="product-detail" *ngIf="!loading && product">
+    <div class="product-image-section">
+      <img [src]="product.image_url" [alt]="product.name" class="product-image">
+    </div>
+    
+    <div class="product-info-section">
+      <div class="product-header">
+        <h1>{{ product.name }}</h1>
+        <button 
+          class="favorite-btn" 
+          [class.active]="isFavorite"
+          (click)="toggleFavorite()"
+          [disabled]="addingToFavorites"
+        >
+          <span *ngIf="!addingToFavorites">{{ isFavorite ? '❤️' : '🤍' }}</span>
+          <span *ngIf="addingToFavorites">⏳</span>
+        </button>
+      </div>
+      
+      <div class="product-price">
+        <span class="price">${{ product.price }}</span>
+      </div>
+      
+      <div class="product-tags">
+        <span class="tag category">{{ product.category | titlecase }}</span>
+        <span class="tag age">{{ product.age_group | titlecase }}</span>
+        <span class="tag gender">{{ product.gender | titlecase }}</span>
+        <span class="tag size">{{ product.size }}</span>
+      </div>
+      
+      <div class="product-description">
+        <h3>Description</h3>
+        <p>{{ product.description }}</p>
+      </div>
+      
+      <div class="product-details">
+        <div class="detail-row">
+          <span class="label">Brand:</span>
+          <span class="value">{{ product.brand }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Material:</span>
+          <span class="value">{{ product.material }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Color:</span>
+          <span class="value">{{ product.color }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Stock:</span>
+          <span class="value" [class.out-of-stock]="!isInStock">
+            {{ product.stock_quantity > 0 ? product.stock_quantity + ' available' : 'Out of stock' }}
+          </span>
+        </div>
+      </div>
+      
+      <div class="purchase-section" *ngIf="isInStock">
+        <div class="quantity-selector">
+          <label>Quantity:</label>
+          <div class="quantity-controls">
+            <button class="qty-btn" (click)="decreaseQuantity()" [disabled]="quantity <= 1">-</button>
+            <span class="quantity">{{ quantity }}</span>
+            <button class="qty-btn" (click)="increaseQuantity()" [disabled]="quantity >= product.stock_quantity">+</button>
+          </div>
+        </div>
+        
+        <div class="action-buttons">
+          <button 
+            class="add-to-cart-btn" 
+            (click)="addToCart()"
+            [disabled]="addingToCart || !isLoggedIn"
+          >
+            <span *ngIf="!addingToCart">Add to Cart</span>
+            <span *ngIf="addingToCart">Adding...</span>
+          </button>
+          
+          <div class="login-prompt" *ngIf="!isLoggedIn">
+            <p>Please <a routerLink="/login">login</a> to add items to cart</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="out-of-stock-message" *ngIf="!isInStock">
+        <p>This item is currently out of stock</p>
+      </div>
+    </div>
+  </div>
+</div>

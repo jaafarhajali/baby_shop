@@ -1,0 +1,97 @@
+<div class="catalog-container">
+  <div class="catalog-header">
+    <h1>Baby Products</h1>
+    <div class="search-bar">
+      <input 
+        type="text" 
+        placeholder="Search products..." 
+        [(ngModel)]="searchQuery" 
+        (keyup.enter)="onSearch()"
+        class="search-input"
+      />
+      <button (click)="onSearch()" class="search-btn">Search</button>
+    </div>
+  </div>
+
+  <div class="catalog-content">
+    <!-- Filters Sidebar -->
+    <aside class="filters-sidebar">
+      <h3>Filters</h3>
+      
+      <div class="filter-group" *ngIf="categories">
+        <h4>Category</h4>
+        <select [(ngModel)]="filters.category" (change)="onFilterChange()" class="filter-select">
+          <option value="">All Categories</option>
+          <option *ngFor="let category of categories.categories | keyvalue" [value]="category.key">
+            {{ category.key | titlecase }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group" *ngIf="categories">
+        <h4>Age Group</h4>
+        <select [(ngModel)]="filters.age_group" (change)="onFilterChange()" class="filter-select">
+          <option value="">All Ages</option>
+          <option *ngFor="let age of categories.age_groups" [value]="age">
+            {{ age | titlecase }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group" *ngIf="categories">
+        <h4>Gender</h4>
+        <select [(ngModel)]="filters.gender" (change)="onFilterChange()" class="filter-select">
+          <option value="">All Genders</option>
+          <option *ngFor="let gender of categories.genders" [value]="gender">
+            {{ gender | titlecase }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <h4>Sort By</h4>
+        <select [(ngModel)]="filters.sort" (change)="onFilterChange()" class="filter-select">
+          <option value="">Default</option>
+          <option value="price_asc">Price: Low to High</option>
+          <option value="price_desc">Price: High to Low</option>
+          <option value="name">Name</option>
+        </select>
+      </div>
+
+      <button (click)="clearFilters()" class="clear-filters-btn">Clear All Filters</button>
+    </aside>
+
+    <!-- Products Grid -->
+    <main class="products-section">
+      <div class="products-count">
+        <span *ngIf="!loading">{{ products.length }} products found</span>
+      </div>
+
+      <div class="loading" *ngIf="loading">Loading products...</div>
+
+      <div class="products-grid" *ngIf="!loading">
+        <div class="product-card" *ngFor="let product of products">
+          <img [src]="product.image_url" [alt]="product.name" class="product-image">
+          <div class="product-info">
+            <h3>{{ product.name }}</h3>
+            <p class="product-price">${{ product.price }}</p>
+            <div class="product-tags">
+              <span class="tag category">{{ product.category }}</span>
+              <span class="tag age">{{ product.age_group }}</span>
+              <span class="tag gender">{{ product.gender }}</span>
+            </div>
+            <p class="product-description">{{ product.description | slice:0:100 }}...</p>
+            <div class="product-actions">
+              <a [routerLink]="['/products', product.id]" class="view-btn">View Details</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="no-products" *ngIf="!loading && products.length === 0">
+        <p>No products found matching your criteria.</p>
+        <button (click)="clearFilters()" class="clear-filters-btn">Clear Filters</button>
+      </div>
+    </main>
+  </div>
+</div>

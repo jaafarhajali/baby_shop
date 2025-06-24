@@ -1,0 +1,113 @@
+<!-- 
+  Home Component Template
+  
+  This template creates the main landing page layout with:
+  1. Hero section with welcome message and call-to-action
+  2. Categories grid for easy navigation
+  3. Featured products showcase
+  4. Age-based shopping options
+-->
+<div class="home-container">
+  <!-- 
+    Hero Section - Main banner area
+    
+    Displays welcome message and primary call-to-action button.
+    The routerLink directive navigates to the products page when clicked.
+  -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Welcome to Baby Clothes Shop</h1>
+      <p>Discover adorable, comfortable, and safe clothing for your little ones</p>
+      <!-- Router link for navigation to products catalog -->
+      <a routerLink="/products" class="cta-button">Shop Now</a>
+    </div>
+  </section>
+
+  <!-- 
+    Categories Section - Product category navigation
+    
+    Shows only if categories data is loaded (*ngIf="categories").
+    Uses keyvalue pipe to iterate over categories object.
+    Each category has an icon and links to filtered product view.
+  -->
+  <section class="categories" *ngIf="categories">
+    <h2>Shop by Category</h2>
+    <div class="category-grid">
+      <!-- Loop through categories using keyvalue pipe -->
+      <div class="category-card" *ngFor="let category of categories.categories | keyvalue">
+        <div class="category-icon">
+          <!-- Conditional icons based on category type -->
+          <span *ngIf="category.key === 'clothing'">👕</span>
+          <span *ngIf="category.key === 'accessories'">👒</span>
+          <span *ngIf="category.key === 'toys'">🧸</span>
+          <span *ngIf="category.key === 'feeding'">🍼</span>
+          <span *ngIf="category.key === 'safety'">🛡️</span>
+        </div>
+        <!-- Category name with titlecase pipe for proper formatting -->
+        <h3>{{ category.key | titlecase }}</h3>
+        <!-- Navigation link with query parameters for filtering -->
+        <a [routerLink]="['/products']" [queryParams]="{category: category.key}" class="category-link">
+          Shop {{ category.key | titlecase }}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 
+    Featured Products Section
+    
+    Displays a grid of featured products with:
+    - Product images with proper accessibility attributes
+    - Product names, prices, and category tags
+    - Links to detailed product pages
+    - Loading state management
+  -->
+  <section class="featured-products">
+    <h2>Featured Products</h2>
+    <!-- Loading indicator shown while fetching data -->
+    <div class="loading" *ngIf="loading">Loading products...</div>
+    <!-- Product grid shown after data loads -->
+    <div class="products-grid" *ngIf="!loading">
+      <div class="product-card" *ngFor="let product of featuredProducts">
+        <!-- Product image with proper accessibility attributes -->
+        <img 
+          [src]="product.image_url" 
+          [alt]="'Image of ' + product.name" 
+          [title]="product.name"
+          class="product-image">
+        <div class="product-info">
+          <h3>{{ product.name }}</h3>
+          <p class="product-price">${{ product.price }}</p>
+          <!-- Product tags for age group and gender -->
+          <div class="product-tags">
+            <span class="tag">{{ product.age_group }}</span>
+            <span class="tag">{{ product.gender }}</span>
+          </div>
+          <!-- Link to detailed product page -->
+          <a [routerLink]="['/products', product.id]" class="product-link">View Details</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 
+    Age Groups Section
+    
+    Provides navigation links to shop by specific age groups.
+    Only displays if categories data is available.
+    Uses titlecase pipe for proper text formatting.
+  -->
+  <section class="age-groups" *ngIf="categories">
+    <h2>Shop by Age</h2>
+    <div class="age-grid">
+      <!-- Loop through available age groups -->
+      <div class="age-card" *ngFor="let age of categories.age_groups">
+        <h3>{{ age | titlecase }}</h3>
+        <!-- Navigation link with age group filter parameter -->
+        <a [routerLink]="['/products']" [queryParams]="{age_group: age}" class="age-link">
+          Shop for {{ age | titlecase }}
+        </a>
+      </div>
+    </div>
+  </section>
+</div>

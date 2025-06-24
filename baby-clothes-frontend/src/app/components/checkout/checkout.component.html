@@ -1,0 +1,118 @@
+<div class="checkout-container">
+  <div class="checkout-header">
+    <h1>Checkout</h1>
+  </div>
+
+  <div class="loading" *ngIf="loading">Loading...</div>
+
+  <div class="checkout-content" *ngIf="!loading">
+    <div class="checkout-form">
+      <form (ngSubmit)="submitOrder()" class="order-form">
+        <div class="form-section">
+          <h3>Shipping Information</h3>
+          <div class="form-group">
+            <label for="shipping_address">Shipping Address *</label>
+            <textarea
+              id="shipping_address"
+              name="shipping_address"
+              [(ngModel)]="orderData.shipping_address"
+              (input)="onShippingAddressChange()"
+              required
+              class="form-input"
+              rows="3"
+              placeholder="Enter your shipping address"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>Billing Information</h3>
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                [(ngModel)]="orderData.same_as_shipping"
+                (change)="onSameAsShippingChange()"
+                name="same_as_shipping"
+              />
+              Same as shipping address
+            </label>
+          </div>
+
+          <div class="form-group" *ngIf="!orderData.same_as_shipping">
+            <label for="billing_address">Billing Address *</label>
+            <textarea
+              id="billing_address"
+              name="billing_address"
+              [(ngModel)]="orderData.billing_address"
+              required
+              class="form-input"
+              rows="3"
+              placeholder="Enter your billing address"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>Payment Method</h3>
+          <div class="form-group">
+            <label for="payment_method">Payment Method *</label>
+            <select
+              id="payment_method"
+              [(ngModel)]="orderData.payment_method"
+              name="payment_method"
+              class="form-input"
+            >
+              <option value="credit_card">Credit Card</option>
+              <option value="paypal">PayPal</option>
+              <option value="bank_transfer">Bank Transfer</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="submit"
+            class="place-order-btn"
+            [disabled]="processing"
+          >
+            <span *ngIf="!processing">Place Order</span>
+            <span *ngIf="processing">Processing...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="order-summary">
+      <div class="summary-card">
+        <h3>Order Summary</h3>
+        
+        <div class="order-items">
+          <div class="order-item" *ngFor="let item of cart.items">
+            <img [src]="item.image_url" [alt]="item.name" [title]="item.name" class="item-image">
+            <div class="item-details">
+              <h4>{{ item.name }}</h4>
+              <p>Quantity: {{ item.quantity }}</p>
+              <p class="item-price">${{ (item.price * item.quantity).toFixed(2) }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="summary-totals">
+          <div class="summary-row">
+            <span>Subtotal:</span>
+            <span>${{ cart.total.toFixed(2) }}</span>
+          </div>
+          <div class="summary-row">
+            <span>Shipping:</span>
+            <span>Free</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total:</span>
+            <span>${{ cart.total.toFixed(2) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
