@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart & Image Debug Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        .button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .image-test { display: inline-block; margin: 10px; text-align: center; }
+        .image-test img { width: 100px; height: 100px; object-fit: contain; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h1>🛒 Cart & Image Debug Test</h1>
+    
+    <div class="section">
+        <h2>1. Test Image Access</h2>
+        <p>Testing if images are accessible via Angular dev server:</p>
+        <div class="image-test">
+            <img src="http://localhost:4200/assets/onesie-white.jpeg" alt="Test Image 1">
+            <div>onesie-white.jpeg</div>
+        </div>
+        <div class="image-test">
+            <img src="http://localhost:4200/assets/bear-plush.jpeg" alt="Test Image 2">
+            <div>bear-plush.jpeg</div>
+        </div>
+        <div class="image-test">
+            <img src="http://localhost:4200/assets/tutu-rainbow.jpeg" alt="Test Image 3">
+            <div>tutu-rainbow.jpeg</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>2. Add Items to Cart for Testing</h2>
+        <button class="button" onclick="addTestItems()">Add Test Items to Cart</button>
+        <button class="button" onclick="getCart()">Get Current Cart</button>
+        <button class="button" onclick="clearCart()">Clear Cart</button>
+        <div id="cart-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>3. Check API Image Paths</h2>
+        <button class="button" onclick="checkProducts()">Check Product Image Paths</button>
+        <div id="products-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>4. Open Angular App</h2>
+        <button class="button" onclick="openAngular()">Open Angular Cart Page</button>
+        <p>After adding items, check the cart page: <a href="http://localhost:4200/cart" target="_blank">http://localhost:4200/cart</a></p>
+    </div>
+
+    <script>
+        const apiUrl = 'http://localhost/baby-clothes-shop/baby-clothes-api/api.php';
+
+        async function addTestItems() {
+            const resultDiv = document.getElementById('cart-result');
+            resultDiv.innerHTML = '<p>Adding test items to cart...</p>';
+            
+            const testItems = [
+                { user_id: 1, product_id: 1, quantity: 1 },
+                { user_id: 1, product_id: 2, quantity: 2 },
+                { user_id: 1, product_id: 3, quantity: 1 }
+            ];
+            
+            let results = '';
+            
+            for (const item of testItems) {
+                try {
+                    const response = await fetch(`${apiUrl}/cart`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(item)
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        results += `<div class="result success">✅ Added item ${item.product_id} to cart</div>`;
+                    } else {
+                        results += `<div class="result error">❌ Failed to add item ${item.product_id}: ${JSON.stringify(data)}</div>`;
+                    }
+                } catch (error) {
+                    results += `<div class="result error">❌ Error adding item ${item.product_id}: ${error.message}</div>`;
+                }
+            }
+            
+            resultDiv.innerHTML = results;
+        }
+
+        async function getCart() {
+            const resultDiv = document.getElementById('cart-result');
+            resultDiv.innerHTML = '<p>Getting cart...</p>';
+            
+            try {
+                const response = await fetch(`${apiUrl}/cart?user_id=1`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    let html = '<div class="result success">✅ Cart Contents:</div><pre>';
+                    html += JSON.stringify(data, null, 2);
+                    html += '</pre>';
+                    
+                    if (Array.isArray(data) && data.length > 0) {
+                        html += '<h4>Image URLs in cart:</h4><ul>';
+                        data.forEach(item => {
+                            html += `<li>${item.name}: ${item.image_url}</li>`;
+                        });
+                        html += '</ul>';
+                    }
+                    
+                    resultDiv.innerHTML = html;
+                } else {
+                    resultDiv.innerHTML = `<div class="result error">❌ Error getting cart: ${JSON.stringify(data)}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function clearCart() {
+            const resultDiv = document.getElementById('cart-result');
+            resultDiv.innerHTML = '<p>Clearing cart...</p>';
+            
+            try {
+                // Get cart items first
+                const getResponse = await fetch(`${apiUrl}/cart?user_id=1`);
+                const items = await getResponse.json();
+                
+                if (Array.isArray(items)) {
+                    for (const item of items) {
+                        await fetch(`${apiUrl}/cart/${item.id}`, { method: 'DELETE' });
+                    }
+                }
+                
+                resultDiv.innerHTML = '<div class="result success">✅ Cart cleared</div>';
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">❌ Error clearing cart: ${error.message}</div>`;
+            }
+        }
+
+        async function checkProducts() {
+            const resultDiv = document.getElementById('products-result');
+            resultDiv.innerHTML = '<p>Checking products...</p>';
+            
+            try {
+                const response = await fetch(`${apiUrl}/products`);
+                const data = await response.json();
+                
+                if (response.ok && Array.isArray(data)) {
+                    let html = '<div class="result success">✅ Product Image Paths:</div><ul>';
+                    data.forEach(product => {
+                        html += `<li>ID ${product.id}: ${product.name} - ${product.image_url}</li>`;
+                    });
+                    html += '</ul>';
+                    resultDiv.innerHTML = html;
+                } else {
+                    resultDiv.innerHTML = `<div class="result error">❌ Error getting products: ${JSON.stringify(data)}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+
+        function openAngular() {
+            window.open('http://localhost:4200/cart', '_blank');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Display Test - All Components</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .image-test {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+        }
+        .image-test img {
+            width: 100%;
+            height: 150px;
+            object-fit: contain;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .status-good { border-color: #28a745; }
+        .status-bad { border-color: #dc3545; }
+        .button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🖼️ Image Display Test - All Components Updated</h1>
+    
+    <div class="test-section">
+        <h2>✅ Completed Image Improvements</h2>
+        <ul>
+            <li><strong>Home Component:</strong> Featured products grid - ✅ Fixed</li>
+            <li><strong>Product Catalog:</strong> Product listing grid - ✅ Fixed</li>
+            <li><strong>Product Detail:</strong> Main product image - ✅ Fixed</li>
+            <li><strong>Cart Component:</strong> Cart item thumbnails - ✅ Fixed</li>
+            <li><strong>Checkout Component:</strong> Order summary images - ✅ Fixed</li>
+            <li><strong>Global Styles:</strong> Enhanced image handling - ✅ Added</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>🎨 Image Style Improvements Applied</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <h3>Before (Problems):</h3>
+                <ul style="color: #dc3545;">
+                    <li>❌ Images cropped with object-fit: cover</li>
+                    <li>❌ No background for transparent images</li>
+                    <li>❌ No hover effects</li>
+                    <li>❌ Fixed small heights (200px)</li>
+                    <li>❌ No image loading states</li>
+                </ul>
+            </div>
+            <div>
+                <h3>After (Fixed):</h3>
+                <ul style="color: #28a745;">
+                    <li>✅ Full images shown with object-fit: contain</li>
+                    <li>✅ Light gray background for all images</li>
+                    <li>✅ Smooth hover zoom effects</li>
+                    <li>✅ Increased heights (250px for products)</li>
+                    <li>✅ Loading and error state styles</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔍 Image Access Test</h2>
+        <p>Testing direct access to your product images:</p>
+        <div class="image-grid">
+            <div class="image-test" id="test1">
+                <img src="http://localhost:4200/assets/onesie-white.jpeg" alt="Onesie White">
+                <div>onesie-white.jpeg</div>
+            </div>
+            <div class="image-test" id="test2">
+                <img src="http://localhost:4200/assets/bear-plush.jpeg" alt="Bear Plush">
+                <div>bear-plush.jpeg</div>
+            </div>
+            <div class="image-test" id="test3">
+                <img src="http://localhost:4200/assets/tutu-rainbow.jpeg" alt="Tutu Rainbow">
+                <div>tutu-rainbow.jpeg</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🚀 Quick Access Links</h2>
+        <button class="button" onclick="window.open('http://localhost:4200', '_blank')">Open Angular App</button>
+        <button class="button" onclick="window.open('http://localhost:4200/products', '_blank')">View Product Catalog</button>
+        <button class="button" onclick="window.open('http://localhost/baby-clothes-shop/baby-clothes-api/api.php/products', '_blank')">Test API</button>
+    </div>
+
+    <div class="test-section">
+        <h2>📋 Next Steps</h2>
+        <ol>
+            <li><strong>Test the Angular App:</strong> Open http://localhost:4200 and check all pages</li>
+            <li><strong>Add Real Images:</strong> Replace placeholder images with actual product photos</li>
+            <li><strong>Check All Components:</strong> Navigate through Home → Products → Product Details → Cart → Checkout</li>
+            <li><strong>Browser Console:</strong> Check for any 404 errors or loading issues</li>
+            <li><strong>Mobile Testing:</strong> Test responsive image behavior on different screen sizes</li>
+        </ol>
+    </div>
+
+    <script>
+        // Test image loading
+        document.addEventListener('DOMContentLoaded', function() {
+            const tests = ['test1', 'test2', 'test3'];
+            tests.forEach(id => {
+                const container = document.getElementById(id);
+                const img = container.querySelector('img');
+                
+                img.onload = function() {
+                    container.className += ' status-good';
+                    container.innerHTML += '<div style="color: #28a745; font-weight: bold;">✅ Loaded</div>';
+                };
+                
+                img.onerror = function() {
+                    container.className += ' status-bad';
+                    container.innerHTML += '<div style="color: #dc3545; font-weight: bold;">❌ Failed</div>';
+                };
+            });
+        });
+    </script>
+</body>
+</html>

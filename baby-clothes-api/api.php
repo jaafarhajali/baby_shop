@@ -1,6 +1,18 @@
 <?php
 require_once 'config.php';
 
+// Enable CORS headers for Angular frontend
+header('Access-Control-Allow-Origin: http://localhost:4200');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Content-Type: application/json');
+
+// Handle preflight OPTIONS requests
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
 // Enable error reporting for debugging (remove in production)
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -119,9 +131,8 @@ function handleProducts($method, $request) {
                     $stmt->execute($params);
                     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     
-                    echo json_encode($products);
-                } catch (Exception $e) {
-                    // Fallback data if database fails - helps with frontend development
+                    echo json_encode($products);                } catch (Exception $e) {
+                    // Fallback data if database fails - ALL products with correct image paths
                     error_log("Database error in products endpoint: " . $e->getMessage());
                     echo json_encode([
                         [
@@ -132,32 +143,176 @@ function handleProducts($method, $request) {
                             'category' => 'clothing',
                             'age_group' => 'newborn',
                             'gender' => 'unisex',
-                            'image_url' => '/assets/onesie.jpg',
+                            'image_url' => 'assets/onesie-white.jpeg',
                             'stock_quantity' => 50,
                             'is_active' => true
                         ],
                         [
                             'id' => 2,
-                            'name' => 'Baby Bear Plushie',
+                            'name' => 'Soft Plush Bear',
                             'description' => 'Cuddly teddy bear toy for babies',
                             'price' => 22.99,
                             'category' => 'toys',
                             'age_group' => '0-3months',
                             'gender' => 'unisex',
-                            'image_url' => '/assets/bear.jpg',
+                            'image_url' => 'assets/bear-plush.jpeg',
                             'stock_quantity' => 30,
                             'is_active' => true
                         ],
                         [
                             'id' => 3,
-                            'name' => 'Pink Baby Dress',
-                            'description' => 'Adorable pink dress for baby girls',
-                            'price' => 28.50,
+                            'name' => 'Rainbow Tutu Dress',
+                            'description' => 'Colorful tutu dress perfect for special occasions',
+                            'price' => 35.99,
                             'category' => 'clothing',
-                            'age_group' => '3-6months',
+                            'age_group' => '12-18months',
                             'gender' => 'girl',
-                            'image_url' => '/assets/dress.jpg',
+                            'image_url' => 'assets/tutu-rainbow.jpeg',
                             'stock_quantity' => 25,
+                            'is_active' => true
+                        ],
+                        [
+                            'id' => 4,
+                            'name' => 'Baby Bib Set',
+                            'description' => 'Set of 3 waterproof bibs',
+                            'price' => 12.99,
+                            'category' => 'feeding',
+                            'age_group' => '0-6months',
+                            'gender' => 'unisex',
+                            'image_url' => 'assets/bib-set.jpeg',
+                            'stock_quantity' => 40,
+                            'is_active' => true
+                        ],
+                        [
+                            'id' => 5,
+                            'name' => 'Bottle Warmer',
+                            'description' => 'Electric bottle warmer for quick heating',
+                            'price' => 29.99,
+                            'category' => 'feeding',
+                            'age_group' => '0-12months',
+                            'gender' => 'unisex',
+                            'image_url' => 'assets/bottle-warmer.jpeg',
+                            'stock_quantity' => 15,
+                            'is_active' => true
+                        ],
+                        [
+                            'id' => 6,
+                            'name' => 'Knit Winter Hat',
+                            'description' => 'Warm knitted hat for cold weather',
+                            'price' => 8.99,
+                            'category' => 'accessories',
+                            'age_group' => '6-12months',
+                            'gender' => 'unisex',
+                            'image_url' => 'assets/hat-knit.jpeg',
+                            'stock_quantity' => 35,
+                            'is_active' => true
+                        ],
+                        [
+                            'id' => 7,
+                            'name' => 'Sun Protection Hat',
+                            'description' => 'Lightweight hat with UV protection',
+                            'price' => 11.99,
+                            'category' => 'accessories',
+                            'age_group' => '3-6months',
+                            'gender' => 'unisex',
+                            'image_url' => 'assets/hat-sun.jpeg',
+                            'stock_quantity' => 28,
+                            'is_active' => true
+                        ],
+                        [
+                            'id' => 8,
+                            'name' => 'Bow Headband',
+                            'description' => 'Cute headband with decorative bow',
+                            'price' => 6.99,
+                            'category' => 'accessories',
+                            'age_group' => '0-6months',
+                            'gender' => 'girl',
+                            'image_url' => 'assets/headband-bow.jpeg',
+                            'stock_quantity' => 45,
+                            'is_active' => true
+                        ],
+                        [
+                            'id' => 9,
+                            'name' => 'Baby High Chair',
+                            'description' => 'Adjustable high chair for feeding time',
+                            'price' => 89.99,
+                            'category' => 'feeding',
+                            'age_group' => '6-24months',
+                            'gender' => 'unisex',
+                            'image_url' => 'assets/highchair.jpeg',
+                            'stock_quantity' => 8,
+                            'is_active' => true
+                        ],
+                        [
+                            'id' => 10,
+                            'name' => 'Baby Monitor',
+                            'description' => 'Digital baby monitor with night vision',
+                            'price' => 79.99,
+                            'category' => 'safety',
+                            'age_group' => '0-24months',
+                            'gender' => 'unisex',
+                            'image_url' => 'assets/monitor.jpeg',
+                            'stock_quantity' => 12,
+                            'is_active' => true
+                        ],
+                        [
+                            'id' => 11,
+                            'name' => 'Floral Romper',
+                            'description' => 'Summer romper with floral print',
+                            'price' => 18.99,
+                            'category' => 'clothing',
+                            'age_group' => '6-12months',
+                            'gender' => 'girl',
+                            'image_url' => 'assets/romper-floral.jpeg',
+                            'stock_quantity' => 32,
+                            'is_active' => true
+                        ],
+                        [
+                            'id' => 12,
+                            'name' => 'Striped T-Shirt',
+                            'description' => 'Cotton t-shirt with colorful stripes',
+                            'price' => 9.99,
+                            'category' => 'clothing',
+                            'age_group' => '12-18months',
+                            'gender' => 'unisex',
+                            'image_url' => 'assets/shirt-striped.jpeg',
+                            'stock_quantity' => 38,
+                            'is_active' => true
+                        ],
+                        [
+                            'id' => 13,
+                            'name' => 'Leather Baby Shoes',
+                            'description' => 'Soft leather first walking shoes',
+                            'price' => 24.99,
+                            'category' => 'accessories',
+                            'age_group' => '9-15months',
+                            'gender' => 'unisex',
+                            'image_url' => 'assets/shoes-leather.jpeg',
+                            'stock_quantity' => 20,
+                            'is_active' => true
+                        ],
+                        [
+                            'id' => 14,
+                            'name' => 'Dinosaur Sleeper',
+                            'description' => 'Cozy sleeper with dinosaur pattern',
+                            'price' => 16.99,
+                            'category' => 'clothing',
+                            'age_group' => '0-6months',
+                            'gender' => 'unisex',
+                            'image_url' => 'assets/sleeper-dino.jpeg',
+                            'stock_quantity' => 27,
+                            'is_active' => true
+                        ],
+                        [
+                            'id' => 15,
+                            'name' => 'Teething Rings',
+                            'description' => 'Safe silicone teething rings',
+                            'price' => 7.99,
+                            'category' => 'toys',
+                            'age_group' => '3-12months',
+                            'gender' => 'unisex',
+                            'image_url' => 'assets/teething-rings.jpeg',
+                            'stock_quantity' => 55,
                             'is_active' => true
                         ]
                     ]);
@@ -320,26 +475,50 @@ function handleCart($method, $request) {
                 echo json_encode(['error' => 'User ID required']);
             }
             break;
-            
-        case 'POST':
+              case 'POST':
             $data = json_decode(file_get_contents('php://input'), true);
             
-            // Check if item already exists in cart
-            $stmt = $pdo->prepare("SELECT id, quantity FROM cart WHERE user_id = ? AND product_id = ?");
-            $stmt->execute([$data['user_id'], $data['product_id']]);
-            $existing = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            if ($existing) {
-                // Update quantity
-                $stmt = $pdo->prepare("UPDATE cart SET quantity = quantity + ? WHERE id = ?");
-                $stmt->execute([$data['quantity'], $existing['id']]);
-            } else {
-                // Add new item
-                $stmt = $pdo->prepare("INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, ?)");
-                $stmt->execute([$data['user_id'], $data['product_id'], $data['quantity']]);
+            // Validate input data
+            if (!$data || !isset($data['user_id']) || !isset($data['product_id']) || !isset($data['quantity'])) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Missing required fields: user_id, product_id, quantity']);
+                break;
             }
             
-            echo json_encode(['message' => 'Item added to cart']);
+            // Validate data types and values
+            if (!is_numeric($data['user_id']) || !is_numeric($data['product_id']) || !is_numeric($data['quantity'])) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid data types']);
+                break;
+            }
+            
+            if ($data['quantity'] <= 0) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Quantity must be greater than 0']);
+                break;
+            }
+            
+            try {
+                // Check if item already exists in cart
+                $stmt = $pdo->prepare("SELECT id, quantity FROM cart WHERE user_id = ? AND product_id = ?");
+                $stmt->execute([$data['user_id'], $data['product_id']]);
+                $existing = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($existing) {
+                    // Update quantity
+                    $stmt = $pdo->prepare("UPDATE cart SET quantity = quantity + ? WHERE id = ?");
+                    $stmt->execute([$data['quantity'], $existing['id']]);
+                } else {
+                    // Add new item
+                    $stmt = $pdo->prepare("INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, ?)");
+                    $stmt->execute([$data['user_id'], $data['product_id'], $data['quantity']]);
+                }
+                
+                echo json_encode(['message' => 'Item added to cart', 'success' => true]);
+            } catch (PDOException $e) {
+                http_response_code(500);
+                echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+            }
             break;
             
         case 'PUT':

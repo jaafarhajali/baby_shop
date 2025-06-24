@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick Cart Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Quick Cart API Test</h1>
+    
+    <button onclick="testAddToCart()">Test Add to Cart</button>
+    <button onclick="testGetCart()">Test Get Cart</button>
+    
+    <div id="result"></div>
+
+    <script>
+        const baseUrl = 'http://localhost/baby-clothes-shop/baby-clothes-api/api.php';
+        
+        async function testAddToCart() {
+            const resultDiv = document.getElementById('result');
+            
+            const cartData = {
+                user_id: 1,
+                product_id: 1,
+                quantity: 1
+            };
+            
+            try {
+                const response = await fetch(`${baseUrl}/cart`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(cartData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<div class="result success">✅ Add to Cart Success: ${JSON.stringify(data)}</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="result error">❌ Add to Cart Error (${response.status}): ${JSON.stringify(data)}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">❌ Network Error: ${error.message}</div>`;
+            }
+        }
+        
+        async function testGetCart() {
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                const response = await fetch(`${baseUrl}/cart?user_id=1`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<div class="result success">✅ Get Cart Success: ${JSON.stringify(data, null, 2)}</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="result error">❌ Get Cart Error (${response.status}): ${JSON.stringify(data)}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">❌ Network Error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

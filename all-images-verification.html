@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 ALL IMAGES - Complete Verification</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .hero {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .hero h1 {
+            color: #4a90e2;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .status-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #28a745;
+        }
+        .status-card.warning {
+            border-left-color: #ffc107;
+        }
+        .status-card.error {
+            border-left-color: #dc3545;
+        }
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .image-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .image-card:hover {
+            transform: translateY(-5px);
+        }
+        .image-container {
+            height: 200px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+        .image-container:hover img {
+            transform: scale(1.05);
+        }
+        .image-info {
+            padding: 15px;
+            text-align: center;
+        }
+        .image-info h3 {
+            margin: 0 0 10px 0;
+            font-size: 1rem;
+            color: #333;
+        }
+        .status-indicator {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .test-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        .btn {
+            background: #4a90e2;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #357abd;
+            transform: translateY(-2px);
+        }
+        .btn.success { background: #28a745; }
+        .btn.warning { background: #ffc107; color: #333; }
+        .btn.danger { background: #dc3545; }
+        .component-test {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .component-test h3 {
+            color: #4a90e2;
+            margin-bottom: 15px;
+        }
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .feature-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>🎯 ALL IMAGES - Complete Verification System</h1>
+            <p style="font-size: 1.2rem; color: #666;">Comprehensive testing for all images across your Baby Clothes Shop</p>
+        </div>
+
+        <div class="status-grid">
+            <div class="status-card">
+                <h3>✅ Components Updated</h3>
+                <ul>
+                    <li>Home Component - Featured Products</li>
+                    <li>Product Catalog - Product Grid</li>
+                    <li>Product Detail - Main Images</li>
+                    <li>Cart Component - Item Thumbnails</li>
+                    <li>Checkout Component - Order Images</li>
+                </ul>
+            </div>
+            <div class="status-card">
+                <h3>🎨 Style Improvements</h3>
+                <ul>
+                    <li>object-fit: contain (no cropping)</li>
+                    <li>Background colors for transparency</li>
+                    <li>Hover zoom effects</li>
+                    <li>Increased container heights</li>
+                    <li>Image loading states</li>
+                </ul>
+            </div>
+            <div class="status-card">
+                <h3>📁 Available Images</h3>
+                <div id="image-count">15 product images found</div>
+                <div id="image-status">Loading image verification...</div>
+            </div>
+        </div>
+
+        <div class="test-buttons">
+            <button class="btn success" onclick="testAllImages()">🔍 Test All Images</button>
+            <button class="btn" onclick="testAPI()">🔗 Test API Response</button>
+            <a href="http://localhost:4200" target="_blank" class="btn">🏠 Open Angular App</a>
+            <a href="http://localhost:4200/products" target="_blank" class="btn">📋 Product Catalog</a>
+        </div>
+
+        <div class="component-test">
+            <h3>🖼️ Image Verification Results</h3>
+            <div id="image-test-results">Click "Test All Images" to start verification...</div>
+            <div class="image-grid" id="image-grid"></div>
+        </div>
+
+        <div class="component-test">
+            <h3>🎯 All Applied Improvements</h3>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <strong>No Image Cropping</strong><br>
+                    Changed from object-fit: cover to contain
+                </div>
+                <div class="feature-item">
+                    <strong>Better Backgrounds</strong><br>
+                    Added light gray backgrounds for all images
+                </div>
+                <div class="feature-item">
+                    <strong>Hover Effects</strong><br>
+                    Smooth zoom animations on hover
+                </div>
+                <div class="feature-item">
+                    <strong>Proper Sizing</strong><br>
+                    Increased heights for better visibility
+                </div>
+                <div class="feature-item">
+                    <strong>Container Wrapping</strong><br>
+                    Added image-container divs where needed
+                </div>
+                <div class="feature-item">
+                    <strong>Loading States</strong><br>
+                    CSS for loading and error handling
+                </div>
+                <div class="feature-item">
+                    <strong>Database Updates</strong><br>
+                    All products now have correct image paths
+                </div>
+                <div class="feature-item">
+                    <strong>API Fallback</strong><br>
+                    15 products with correct image references
+                </div>
+            </div>
+        </div>
+
+        <div class="component-test">
+            <h3>📊 API Response Test</h3>
+            <div id="api-results">Click "Test API Response" to check database...</div>
+        </div>
+    </div>
+
+    <script>
+        const imageFiles = [
+            'bear-plush.jpeg',
+            'bib-set.jpeg', 
+            'bottle-warmer.jpeg',
+            'hat-knit.jpeg',
+            'hat-sun.jpeg',
+            'headband-bow.jpeg',
+            'highchair.jpeg',
+            'monitor.jpeg',
+            'onesie-white.jpeg',
+            'romper-floral.jpeg',
+            'shirt-striped.jpeg',
+            'shoes-leather.jpeg',
+            'sleeper-dino.jpeg',
+            'teething-rings.jpeg',
+            'tutu-rainbow.jpeg'
+        ];
+
+        async function testAllImages() {
+            const grid = document.getElementById('image-grid');
+            const results = document.getElementById('image-test-results');
+            
+            results.innerHTML = '<div style="color: #007bff;">🔄 Testing all 15 images...</div>';
+            grid.innerHTML = '';
+            
+            let successCount = 0;
+            let errorCount = 0;
+            
+            for (const fileName of imageFiles) {
+                const imageUrl = `http://localhost:4200/assets/${fileName}`;
+                const card = document.createElement('div');
+                card.className = 'image-card';
+                
+                card.innerHTML = `
+                    <div class="image-container">
+                        <img src="${imageUrl}" alt="${fileName}" style="display: none;">
+                        <div class="loading">Loading...</div>
+                    </div>
+                    <div class="image-info">
+                        <h3>${fileName}</h3>
+                        <div class="status-indicator" id="status-${fileName.replace('.', '-')}">Testing...</div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+                
+                const img = card.querySelector('img');
+                const loading = card.querySelector('.loading');
+                const status = card.querySelector('.status-indicator');
+                
+                img.onload = function() {
+                    img.style.display = 'block';
+                    loading.style.display = 'none';
+                    status.textContent = '✅ Loaded';
+                    status.className = 'status-indicator status-success';
+                    successCount++;
+                    updateResults();
+                };
+                
+                img.onerror = function() {
+                    loading.textContent = '❌ Failed';
+                    loading.style.color = '#dc3545';
+                    status.textContent = '❌ Error';
+                    status.className = 'status-indicator status-error';
+                    errorCount++;
+                    updateResults();
+                };
+            }
+            
+            function updateResults() {
+                const total = imageFiles.length;
+                const tested = successCount + errorCount;
+                results.innerHTML = `
+                    <div style="font-size: 1.2rem; margin-bottom: 15px;">
+                        📊 Progress: ${tested}/${total} images tested
+                    </div>
+                    <div style="color: #28a745;">✅ Successfully loaded: ${successCount}</div>
+                    <div style="color: #dc3545;">❌ Failed to load: ${errorCount}</div>
+                    ${tested === total ? '<div style="color: #007bff; font-weight: bold; margin-top: 10px;">🎉 All images tested!</div>' : ''}
+                `;
+            }
+        }
+
+        async function testAPI() {
+            const results = document.getElementById('api-results');
+            results.innerHTML = '<div style="color: #007bff;">🔄 Testing API...</div>';
+            
+            try {
+                const response = await fetch('http://localhost/baby-clothes-shop/baby-clothes-api/api.php/products');
+                const data = await response.json();
+                
+                if (Array.isArray(data)) {
+                    const imageUrls = data.map(product => product.image_url).filter(Boolean);
+                    const uniqueImages = [...new Set(imageUrls)];
+                    
+                    results.innerHTML = `
+                        <div style="color: #28a745; font-weight: bold;">✅ API Response Success</div>
+                        <div style="margin: 10px 0;">
+                            <strong>Products found:</strong> ${data.length}<br>
+                            <strong>Unique images:</strong> ${uniqueImages.length}
+                        </div>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; max-height: 200px; overflow-y: auto;">
+                            <strong>Image URLs in database:</strong><br>
+                            ${uniqueImages.map(url => `• ${url}`).join('<br>')}
+                        </div>
+                    `;
+                } else {
+                    results.innerHTML = '<div style="color: #ffc107;">⚠️ API returned non-array data</div>';
+                }
+            } catch (error) {
+                results.innerHTML = `<div style="color: #dc3545;">❌ API Error: ${error.message}</div>`;
+            }
+        }
+
+        // Auto-test on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(testAllImages, 1000);
+        });
+    </script>
+</body>
+</html>

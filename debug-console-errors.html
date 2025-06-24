@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Console Errors</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .debug-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .error-log {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .extension-error { color: #ffc107; }
+        .app-error { color: #dc3545; }
+        .info { color: #17a2b8; }
+    </style>
+</head>
+<body>
+    <h1>🐛 Debug Console Errors</h1>
+    
+    <div class="debug-section">
+        <h2>Error Detection</h2>
+        <p>This tool captures and categorizes console errors to help identify browser extension vs application issues.</p>
+        <button class="button" onclick="clearLog()">Clear Log</button>
+        <button class="button" onclick="testAngularApp()">Test Angular App</button>
+        <button class="button" onclick="checkExtensions()">Check Extensions</button>
+    </div>
+
+    <div class="debug-section">
+        <h2>Error Log</h2>
+        <div id="error-log" class="error-log">
+            <div class="info">Waiting for errors...</div>
+        </div>
+    </div>
+
+    <div class="debug-section">
+        <h2>Solutions</h2>
+        <h3>If you see "message channel closed" errors:</h3>
+        <ul>
+            <li><strong>Browser Extensions:</strong> Try disabling extensions one by one to identify the culprit</li>
+            <li><strong>Common culprits:</strong> Ad blockers, password managers, developer tools extensions</li>
+            <li><strong>Quick fix:</strong> Open an incognito/private window to test without extensions</li>
+        </ul>
+        
+        <h3>If you see other errors:</h3>
+        <ul>
+            <li><strong>Network errors:</strong> Check if your API server is running</li>
+            <li><strong>404 errors:</strong> Verify file paths and routes</li>
+            <li><strong>CORS errors:</strong> Check API CORS headers</li>
+        </ul>
+    </div>
+
+    <script>
+        const errorLog = document.getElementById('error-log');
+        let errorCount = 0;
+
+        // Capture console errors
+        const originalError = console.error;
+        console.error = function(...args) {
+            logError('Console Error', args.join(' '), 'app-error');
+            originalError.apply(console, args);
+        };
+
+        // Capture unhandled promise rejections
+        window.addEventListener('unhandledrejection', (event) => {
+            const reason = event.reason?.message || event.reason || 'Unknown rejection';
+            
+            if (isExtensionError(reason)) {
+                logError('Extension Promise Rejection', reason, 'extension-error');
+            } else {
+                logError('App Promise Rejection', reason, 'app-error');
+            }
+        });
+
+        // Capture general errors
+        window.addEventListener('error', (event) => {
+            const message = event.message || 'Unknown error';
+            
+            if (isExtensionError(message)) {
+                logError('Extension Error', message, 'extension-error');
+            } else {
+                logError('App Error', message, 'app-error');
+            }
+        });
+
+        function isExtensionError(message) {
+            const extensionPatterns = [
+                'message channel closed',
+                'listener indicated an asynchronous response',
+                'chrome-extension:',
+                'moz-extension:',
+                'safari-extension:',
+                'Extension context invalidated'
+            ];
+            
+            return extensionPatterns.some(pattern => 
+                message.toString().toLowerCase().includes(pattern.toLowerCase())
+            );
+        }
+
+        function logError(type, message, className) {
+            errorCount++;
+            const timestamp = new Date().toLocaleTimeString();
+            
+            const errorElement = document.createElement('div');
+            errorElement.className = className;
+            errorElement.innerHTML = `
+                <strong>[${timestamp}] ${type}:</strong><br>
+                ${message}<br><br>
+            `;
+            
+            if (errorLog.firstChild?.className === 'info') {
+                errorLog.innerHTML = '';
+            }
+            
+            errorLog.appendChild(errorElement);
+            errorLog.scrollTop = errorLog.scrollHeight;
+        }
+
+        function clearLog() {
+            errorLog.innerHTML = '<div class="info">Log cleared. Waiting for errors...</div>';
+            errorCount = 0;
+        }
+
+        function testAngularApp() {
+            logError('Test', 'Opening Angular app in new tab...', 'info');
+            window.open('http://localhost:4200', '_blank');
+        }
+
+        function checkExtensions() {
+            logError('Info', 'To check extensions: Open Chrome menu > More tools > Extensions', 'info');
+            logError('Info', 'Try disabling extensions and refresh the Angular app', 'info');
+        }
+
+        // Log initial message
+        logError('Info', 'Error monitoring started. Navigate to your Angular app to capture errors.', 'info');
+    </script>
+</body>
+</html>
